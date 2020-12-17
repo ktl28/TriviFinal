@@ -16,7 +16,7 @@ def safe_get(url):
         print("We failed to reach a server")
         print(url)
         print("Reason: ", e.reason)
-    return None
+    return Nonemain
 
 def pretty(obj):
     return json.dumps(obj, sort_keys=True, indent=2)
