@@ -1,6 +1,7 @@
 import urllib.request, urllib.error, urllib.parse, json
 from flask import Flask, render_template, request, request
 import logging
+import random
 
 app = Flask(__name__)
 
@@ -27,6 +28,7 @@ def create(questions,category,difficulty):
         return json.load(result)
 
 answerd = []
+key = []
 
 @app.route("/", methods=['GET'])
 def main_handler():
@@ -38,12 +40,22 @@ def main_handler():
         difficulty = request.args.get('difficulty')
 
         if category and difficulty:
+            answerd.clear()
+            key.clear()
             data = create(1,category,difficulty.lower())
             app.logger.info(data)
             qdict1 = data['results'][0]['question']
             qdict = qdict1.replace("&quot;","\"")
-            answerd.insert(0,data['results'][0]['correct_answer'])
-            return render_template('question.html', qdict=qdict)
+            incorrect = data['results'][0]['incorrect_answers']
+            correct = data['results'][0]['correct_answer']
+            for word in incorrect:
+                key.append(word)
+            key.insert(random.randint(0, 3), correct)
+            key1 = str(key)
+            key2 = key1.replace("[",'')
+            key3 = key2.replace("]",'')
+            answerd.insert(0,correct)
+            return render_template('question.html', qdict=qdict, key3=key3)
         return render_template("home.html")
     return render_template("home.html")
 
